@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DAKAF WEBSITE</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="font-sans">
+
+  <!-- HEADER -->
+  <header class="w-full h-20 bg-gray-100 flex items-center justify-between px-6 md:px-12">
+    
+    <!-- Logo -->
+    <h1 class="text-2xl font-bold text-blue-600">DAKAF AVAILABLES</h1>
+
+    <!-- Desktop Nav -->
+    <nav class="hidden md:flex">
+      <ul class="flex space-x-6 text-lg">
+        <li class="hover:text-blue-600 cursor-pointer">Home</li>
+        <li class="hover:text-blue-600 cursor-pointer"><a href="  shop.html">Wares</a></li>
+        <li class="hover:text-blue-600 cursor-pointer"><a href="  cart.html">Cart🛒</a></li>
+     </ul>
+    </nav>
+
+    <!-- Appointment Button -->
+    <button class="hidden md:block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-black hover:text-blue-600 transition">
+      <a href="shop.html">
+        ITEMS IN STOCK
+      </a>
+    </button>
+
+    <!-- Mobile Menu Button -->
+    <button onclick="toggleMenu()" class="md:hidden text-3xl">
+      ☰
+    </button>
+    
+  </header>
+
+  <!-- Mobile Menu -->
+  <!-- Mobile Overlay -->
+<div id="overlay"
+class="fixed inset-0 bg-black/50 hidden z-40"
+onclick="toggleMenu()">
+</div>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu"
+class="fixed top-0 right-0 h-full w-72 bg-white shadow-lg
+       transform translate-x-full transition-transform duration-300
+       z-50 md:hidden">
+
+<div class="p-6 flex items-center justify-between border-b">
+  <h2 class="text-xl font-bold text-blue-600">DAKAF</h2>
+  <button onclick="toggleMenu()" class="text-2xl">✕</button>
+</div>
+
+<nav class="p-6">
+  <ul class="space-y-6 text-lg font-medium">
+    <li>
+      <a href="homepage.html" class="block hover:text-blue-600">🏠 Home</a>
+    </li>
+    <li>
+      <a href="shop.html" class="block hover:text-blue-600">🛍 Wares</a>
+    </li>
+    <li>
+      <a href="cart.html" class="block hover:text-blue-600">🛒 Cart</a>
+    </li>
+    <li>
+      <a href="home delivery.html" class="block hover:text-blue-600">🚚 Delivery</a>
+    </li>
+  </ul>
+
+  <button
+    class="mt-10 w-full bg-blue-600 text-white py-3 rounded-xl text-lg">
+    Items in Stock
+  </button>
+</nav>
+</div>
+
+
+  <!-- HERO SECTION -->
+  <section class="min-h-screen bg-black flex flex-col items-center justify-center text-center px-6">
+    
+    <h1 class="text-white font-extrabold text-4xl md:text-6xl lg:text-7xl mb-6">
+      DAKAF <span class="text-blue-600">HOME WARES </span> & APPLIANCES
+    </h1>
+
+    <p class="text-gray-300 max-w-2xl text-base md:text-lg mb-8">
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+      Aut ipsam aliquam vitae sint distinctio voluptatem.
+    </p>
+
+    <h3 class="text-blue-600">
+      <a href="">
+      Designed by: Dakaf Computer Services
+      </a>
+    </h3>
+
+  </section>
+
+  <!-- JS -->
+  <script>
+    function toggleMenu() {
+  const menu = document.getElementById("mobileMenu");
+  const overlay = document.getElementById("overlay");
+
+  menu.classList.toggle("translate-x-full");
+  overlay.classList.toggle("hidden");
+}
+
+  </script>
+
+</body>
+</html>
