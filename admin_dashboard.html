@@ -57,27 +57,26 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
     const res = await fetch(url, options);
 
-    const contentType = res.headers.get("content-type");
     if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`Server error: ${res.status} - ${text}`);
+      const text = await res.text(); // get the actual response
+      console.error("Server returned error:", text);
+      throw new Error(`Server error: ${res.status}`);
     }
 
-    // Only parse JSON if response is actually JSON
+    const contentType = res.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
       return await res.json();
     } else {
-      const text = await res.text();
-      console.warn("Expected JSON but got:", text);
+      console.warn("Expected JSON but got:", await res.text());
       return null;
     }
-
   } catch (err) {
     console.error(err);
-    alert("Fetch error: " + err.message);
+    alert(err.message);
     return null;
   }
 }
+
 
 
   // ========== UPLOAD PRODUCT ==========
