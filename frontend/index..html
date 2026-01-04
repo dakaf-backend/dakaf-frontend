@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login / Sign Up</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white w-full max-w-md rounded-2xl shadow-lg p-6">
+    
+    <!-- Tabs -->
+    <div class="flex mb-6">
+      <button id="loginTab"
+        class="w-1/2 py-2 font-semibold text-center border-b-2 border-blue-600 text-blue-600">
+        Login
+      </button>
+      <button id="signupTab"
+        class="w-1/2 py-2 font-semibold text-center border-b-2 border-transparent text-gray-500">
+        Sign Up
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" id="loginEmail" required
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="loginPassword" required
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+      </div>
+
+      <button type="button" onclick="login()"
+        class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+        Login
+      </button>
+    </form>
+
+    <!-- Sign Up Form -->
+    <form id="signupForm" class="space-y-4 hidden">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Full Name</label>
+        <input type="text" id="signupName" required
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+        <input type="text" id="signupName" required
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" id="signupEmail" required
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="signupPassword" required
+          class="w-full mt-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+      </div>
+
+      <button type="button" onclick="signup()"
+        class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+        Create Account
+      </button>
+    </form>
+
+    <!-- Message -->
+    <p id="msg" class="text-center mt-4 text-sm text-red-600"></p>
+
+  </div>
+
+  <!-- Toggle Script -->
+  <script>
+    const loginTab = document.getElementById("loginTab");
+    const signupTab = document.getElementById("signupTab");
+    const loginForm = document.getElementById("loginForm");
+    const signupForm = document.getElementById("signupForm");
+    const msg = document.getElementById("msg");
+  
+    loginTab.onclick = () => {
+      loginForm.classList.remove("hidden");
+      signupForm.classList.add("hidden");
+      loginTab.classList.add("border-blue-600", "text-blue-600");
+      signupTab.classList.remove("border-blue-600", "text-blue-600");
+      signupTab.classList.add("text-gray-500");
+      msg.innerText = "";
+    };
+  
+    signupTab.onclick = () => {
+      signupForm.classList.remove("hidden");
+      loginForm.classList.add("hidden");
+      signupTab.classList.add("border-blue-600", "text-blue-600");
+      loginTab.classList.remove("border-blue-600", "text-blue-600");
+      loginTab.classList.add("text-gray-500");
+      msg.innerText = "";
+    };
+  
+    const API = "https://dakaf-backend.onrender.com";
+  
+    async function signup() {
+      const name = document.getElementById("signupName").value;
+      const email = document.getElementById("signupEmail").value;
+      const password = document.getElementById("signupPassword").value;
+  
+      try {
+        const res = await fetch(API + "/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password })
+        });
+  
+        const data = await res.json();
+        msg.innerText = data.message;
+      } catch (err) {
+        msg.innerText = "Error connecting to server";
+      }
+    }
+  
+    async function login() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+  
+      try {
+        const res = await fetch(API + "/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+  
+        const data = await res.json();
+  
+        if (res.ok) {
+          localStorage.setItem("role", data.role);
+          if  (data.role === "admin"){
+            window.location.href = "admin_dashboard.html";
+          }else{
+            window.location.href = "shop.html";
+
+          }
+        }
+      } catch (err) {
+        msg.innerText = "Server error";
+      }
+    }
+  </script>
+  
+
+</body>
+</html>
