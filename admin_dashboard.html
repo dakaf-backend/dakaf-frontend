@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const msg = document.getElementById("msg");
   const container = document.getElementById("adminProducts");
 
-  // Preview image
+  // ========== IMAGE PREVIEW ==========
   imageInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -52,67 +52,76 @@ document.addEventListener("DOMContentLoaded", () => {
     preview.classList.remove("hidden");
   });
 
-  // Upload product
+  // ========== SAFE FETCH FUNCTION ==========
+  async function safeFetch(url, options = {}) {
+  try {
+    const res = await fetch(url, options);
+
+    const contentType = res.headers.get("content-type");
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`Server error: ${res.status} - ${text}`);
+    }
+
+    // Only parse JSON if response is actually JSON
+    if (contentType && contentType.includes("application/json")) {
+      return await res.json();
+    } else {
+      const text = await res.text();
+      console.warn("Expected JSON but got:", text);
+      return null;
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Fetch error: " + err.message);
+    return null;
+  }
+}
+
+
+  // ========== UPLOAD PRODUCT ==========
   uploadForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(uploadForm);
-
-    try {
-      const res = await fetch(API + "/products", { method: "POST", body: formData });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Upload failed");
+    const data = await safeFetch(`${API}/products`, { method: "POST", body: formData });
+    if (data) {
       msg.innerText = data.message;
       uploadForm.reset();
       preview.classList.add("hidden");
       loadAdminProducts();
-    } catch (err) {
-      console.error(err);
-      alert("Error: " + err.message);
     }
   });
 
-  // Load all products
+  // ========== LOAD ALL PRODUCTS ==========
   async function loadAdminProducts() {
-    try {
-      const res = await fetch(API + "/products");
-      const products = await res.json();
-      container.innerHTML = "";
+    const products = await safeFetch(`${API}/products`);
+    if (!products) return;
+    container.innerHTML = "";
 
-      products.forEach(p => {
-        container.innerHTML += `
-          <div class="bg-white p-4 rounded shadow flex flex-col items-center">
-            <img src="${p.image}" class="h-40 w-full object-cover rounded mb-2">
-            <h2 class="font-semibold text-lg">${p.name}</h2>
-            <p class="font-bold text-blue-600">₦${p.price}</p>
-            <div class="flex gap-2 mt-2">
-              <button onclick='editProduct(${p.id})' class="bg-yellow-500 text-white px-3 py-1 rounded">Edit</button>
-              <button onclick='deleteProduct(${p.id})' class="bg-red-600 text-white px-3 py-1 rounded">Delete</button>
-            </div>
+    products.forEach(p => {
+      container.innerHTML += `
+        <div class="bg-white p-4 rounded shadow flex flex-col items-center">
+          <img src="${p.image}" class="h-40 w-full object-cover rounded mb-2">
+          <h2 class="font-semibold text-lg">${p.name}</h2>
+          <p class="font-bold text-blue-600">₦${p.price}</p>
+          <div class="flex gap-2 mt-2">
+            <button onclick='editProduct(${p.id})' class="bg-yellow-500 text-white px-3 py-1 rounded">Edit</button>
+            <button onclick='deleteProduct(${p.id})' class="bg-red-600 text-white px-3 py-1 rounded">Delete</button>
           </div>
-        `;
-      });
-    } catch (err) {
-      console.error(err);
-      alert("Failed to load products");
-    }
+        </div>
+      `;
+    });
   }
 
-  // Delete product
+  // ========== DELETE PRODUCT ==========
   window.deleteProduct = async function(id) {
     if (!confirm("Are you sure you want to delete this product?")) return;
-    try {
-      const res = await fetch(`${API}/products/${id}`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Delete failed");
-      alert(data.message);
-      loadAdminProducts();
-    } catch (err) {
-      console.error(err);
-      alert("Error deleting product: " + err.message);
-    }
+    const data = await safeFetch(`${API}/products/${id}`, { method: "DELETE" });
+    if (data) loadAdminProducts();
   };
 
-  // Edit product
+  // ========== EDIT PRODUCT ==========
   window.editProduct = async function(id) {
     const name = prompt("Enter new product name:");
     const price = prompt("Enter new price:");
@@ -122,25 +131,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (name) formData.append("name", name);
     if (price) formData.append("price", price);
 
-    try {
-      const res = await fetch(`${API}/products/${id}`, { method: "PUT", body: formData });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Update failed");
-      alert(data.message);
-      loadAdminProducts();
-    } catch (err) {
-      console.error(err);
-      alert("Error updating product: " + err.message);
-    }
+    const data = await safeFetch(`${API}/products/${id}`, { method: "PUT", body: formData });
+    if (data) loadAdminProducts();
   };
 
-  // Logout
+  // ========== LOGOUT ==========
   window.logout = function() {
     localStorage.clear();
     window.location.href = "login_page.html";
   };
 
-  // Initial load
+  // ========== INITIAL LOAD ==========
   loadAdminProducts();
 });
 </script>
